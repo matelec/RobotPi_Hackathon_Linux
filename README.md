@@ -7,14 +7,12 @@
 [![MicroPython](https://img.shields.io/badge/MicroPython-1.20+-green.svg)](https://micropython.org/)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey.svg)](https://github.com/matelec/RobotPi-IDE)
 
-Application desktop multiplateforme pour programmer facilement un robot mobile basé sur Raspberry Pi Pico, driver TB6612FNG et capteur de distance VL53L0X.
-
-![RobotPi Desktop Screenshot](docs/screenshot.png)
+Application desktop pour linux, utilisé avec debian, pour programmer facilement un robot mobile basé sur Raspberry Pi Pico, driver TB6612FNG et capteur de distance VL53L0X.
 
 ## ✨ Fonctionnalités
 
-- 🎨 **Interface par blocs Blockly** - Programmation visuelle intuitive
-- 🐍 **Génération de code Python** automatique et optimisée
+- 🎨 **Interface par blocs Blockly** — Programmation visuelle intuitive
+- 🐍 **Génération de code Python** automatique
 - 📤 **Téléversement direct** sur le Pico via ampy
 - 📂 **Gestionnaire de fichiers** pour explorer le système de fichiers du Pico
 - 💾 **Sauvegarde/chargement** de projets au format JSON
@@ -37,15 +35,14 @@ Application desktop multiplateforme pour programmer facilement un robot mobile b
 - Éviter un obstacle automatiquement
 
 ### Lumières (LEDs WS2812B)
-- Allumer/éteindre toutes les LEDs
-- Allumer/éteindre une LED spécifique
+- Allumer/éteindre toutes les LEDs ou une LED spécifique
 - Changer la couleur (7 couleurs disponibles)
 - Faire clignoter les LEDs
-- Régler la luminosité (0-100%)
+- Régler la luminosité (0–100%)
 
 ### Bouton
-- Démarrer au bouton
-- Arrêter au bouton
+- Démarrer au bouton (`attendre_bouton_start`)
+- Arrêter au bouton (`attendre_bouton_stop`)
 - Vérifier si le bouton est appuyé
 - Arrêter si bouton appuyé (dans une boucle)
 
@@ -55,318 +52,145 @@ Application desktop multiplateforme pour programmer facilement un robot mobile b
 ### Standard Blockly
 - Logique (conditions, opérateurs booléens)
 - Boucles (répéter, tant que, pour chaque)
-- Mathématiques (opérations, fonctions)
-- Texte (manipulation de chaînes)
-- Listes (tableaux)
+- Mathématiques, Texte, Listes
 - Variables et Fonctions
 
 ## 📋 Prérequis
 
-### Logiciels Nécessaires
+### Logiciels
 
-1. **Node.js** v16+ ([Télécharger](https://nodejs.org/))
-2. **Python 3.7+** ([Télécharger](https://www.python.org/))
-3. **ampy** (Adafruit MicroPython Tool)
-   ```bash
-   pip3 install --user adafruit-ampy
-   ```
+- **Node.js** v16+
+- **Python 3.7+**
+- **ampy** (Adafruit MicroPython Tool) :
+  ```bash
+  pip3 install --user adafruit-ampy
+  ```
 
-### Matériel Nécessaire
+### Matériel
 
-- **Raspberry Pi Pico** avec MicroPython installé
-- **Driver moteur TB6612FNG** (double pont en H)
-- **2 moteurs DC** (avec encodeurs optionnels)
-- **Capteur de distance VL53L0X** (I2C)
-- **Bandeau de LEDs WS2812B** (NeoPixels)
-- **Bouton poussoir** pour contrôle manuel
-- **Châssis de robot** mobile
-- **Batterie** (4x AA ou LiPo 7.4V)
-- **Câbles de connexion** Dupont
+- Raspberry Pi Pico avec MicroPython installé
+- Driver moteur TB6612FNG
+- 2 moteurs DC
+- Capteur de distance VL53L0X (I2C)
+- LEDs WS2812B (NeoPixels)
+- Bouton poussoir
+- Châssis de robot mobile
+- Batteries (voir [`micropython/README.md`](micropython/README.md) pour le câblage complet)
 
-## 🚀 Installation et Utilisation
+## 🚀 Installation
 
-### Méthode 1 : Utiliser les Exécutables Pré-compilés (Recommandé)
+### Méthode 1 : Installeur automatique (Debian/Ubuntu — Recommandé)
 
-Téléchargez la dernière version depuis [GitHub Releases](https://github.com/matelec/RobotPi-IDE/releases) :
+Un script d'installation complet est fourni dans `installer/robot-ide-installer/` :
 
-#### Linux
-```bash
-# AppImage (portable, fonctionne sur toutes les distributions)
-chmod +x RobotPi-IDE-*.AppImage
-./RobotPi-IDE-*.AppImage
-
-# Debian/Ubuntu (.deb)
-sudo dpkg -i robotpi-ide_*_amd64.deb
-robotpi-ide
-
-# Fedora/Red Hat (.rpm)
-sudo rpm -i robotpi-ide-*.x86_64.rpm
-robotpi-ide
-```
-
-#### Windows
-```
-Double-cliquer sur RobotPi-IDE-Setup.exe
-```
-
-#### macOS
-```
-Ouvrir RobotPi-IDE.dmg et glisser l'application dans Applications
-```
-
-### Méthode 2 : Installation depuis les Sources
+copier le dossier robot-ide-installer sur la machine
 
 ```bash
-# 1. Cloner le dépôt
-git clone https://github.com/matelec/RobotPi-IDE.git
-cd RobotPi-IDE
-
-# 2. Installer les dépendances
-npm install
-
-# 3. Lancer l'application en mode développement
-npm start
+# Se placer dans le dossier 
+su -
+cd robot-ide-installer/
+chmod +x install.sh
+./install.sh
 ```
 
-## 🔨 Compilation (Build)
+Le script effectue automatiquement :
+- Installation des dépendances système (`fuse`, `libfuse2`, `python3`, etc.)
+- Installation d'ampy via pip3
+- Configuration des règles USB udev pour le Raspberry Pi Pico
+- Ajout de l'utilisateur aux groupes `dialout` et `plugdev`
+- Installation de l'AppImage dans `/opt/robotpi-ide/`
+- Création du lanceur dans le menu des applications
 
-### Prérequis pour le Build
+> ⚠️ Nécessite les droits root. Conçu pour Debian 12 / Ubuntu.
 
-#### Linux
+Pour désinstaller :
 ```bash
-# Ubuntu/Debian
-sudo apt-get install -y build-essential libudev-dev
-
-# Fedora
-sudo dnf install -y @development-tools systemd-devel
+su -
+cd robot-ide-installer/
+chmod +x uninstall.sh
+./uninstall.sh
 ```
 
-#### Windows
-- Visual Studio Build Tools ou Visual Studio Community
-
-#### macOS
-- Xcode Command Line Tools
-
-### Commandes de Build
-
-```bash
-# Linux
-npm run build:appimage    # AppImage portable
-npm run build:deb         # Package Debian/Ubuntu
-npm run build:rpm         # Package Fedora/Red Hat
-npm run build:all         # Tous les formats Linux
-
-# Windows (depuis Windows)
-npm run build:win         # Installeur NSIS
-
-# macOS (depuis macOS)
-npm run build:mac         # Image disque DMG
-
-# Script automatique (Linux uniquement)
-chmod +x build.sh
-./build.sh appimage       # ou deb, rpm, all
-```
-
-Les fichiers compilés se trouvent dans le dossier `dist/`.
-
-### Tailles Attendues
-- **AppImage** : ~150-200 MB
-- **DEB/RPM** : ~120-150 MB
-- **Windows EXE** : ~130-180 MB
-- **macOS DMG** : ~150-200 MB
-
-## 🛠️ Développement
-
-### Structure du Projet
+## 🛠️ Structure du projet
 
 ```
-RobotPi-IDE/
-├── package.json              # Configuration npm et electron-builder
-├── build.sh                  # Script de build automatique (Linux)
-├── .gitignore               # Fichiers à ignorer
+ROBOTPI_HACKATHON_LINUX/
 │
-├── electron/                # Processus principal Electron
-│   ├── main.js             # Point d'entrée, gestion IPC, ampy
-│   └── preload.js          # Pont IPC sécurisé
+├── Documents/                       # Documents pdf
+│   └── RobotPi - dossier eleves.pdf
+│   └── RobotPi_Challenges.pdf
+│   └── RobotPi.pdf     
 │
-├── app/                     # Application frontend (renderer)
-│   ├── index.html          # Interface utilisateur principale
-│   │
-│   ├── css/
-│   │   └── style.css       # Styles (thème sombre VSCode)
-│   │
-│   └── js/
-│       ├── editor/
-│       │   └── RobotPiEditor.js    # Éditeur principal, gestion UI
-│       │
-│       ├── blockly/
-│       │   ├── blocks/             # Blocs Blockly personnalisés
-│       │   │   ├── mouvements.js
-│       │   │   ├── capteurs.js
-│       │   │   ├── lumieres.js
-│       │   │   ├── bouton.js
-│       │   │   └── attendre.js
-│       │   │
-│       │   ├── generators/         # Générateurs de code Python
-│       │   │   ├── python_mouvements.js
-│       │   │   ├── python_capteurs.js
-│       │   │   ├── python_lumieres.js
-│       │   │   ├── python_bouton.js
-│       │   │   └── python_attendre.js
-│       │   │
-│       │   ├── toolbox.js          # Définition de la boîte à outils
-│       │   └── startBlocks.js      # Blocs de démarrage
-│       │
-│       ├── ampy-manager.js         # Gestion des opérations ampy
-│       └── config.js               # Configuration par défaut
+├── assets/
+│   └── icon.png                   # Icône (512×512)
 │
-├── assets/                  # Ressources statiques
-│   └── icon.png            # Icône de l'application (512x512)
+├── micropython/
+│   ├── robotPi.py                 # Librairie MicroPython pour le Pico
+│   └── README.md                  # Documentation de la librairie
 │
-└── micropython/            # Bibliothèque MicroPython
-│   └── robotPi.py         # Classe RobotPi pour le Pico
-├── Electronique/          # Fichiers de fabrications de la carte électronique
-├── Construction/          # Fichiers de conception mécanique du robot
-
+├── installer/
+│   └── robot-ide-installer/
+│       ├── install.sh             # Script d'installation Debian/Ubuntu
+│       └── uninstall.sh           # Script de désinstallation
+│
+├── Electronique/                  # Fichiers de fabrication de la carte
+└── Construction/                  # Fichiers de conception mécanique
 ```
 
-### Workflow de Développement
+## 📖 Guide d'utilisation
 
-```bash
-# 1. Créer une branche pour votre fonctionnalité
-git checkout -b ma-feature
+### Première utilisation
 
-# 2. Faire vos modifications
-# ...
+1. Connecter le Raspberry Pi Pico via USB
+2. Lancer RobotPi IDE
+3. Sélectionner le port série dans la barre d'outils
+4. Cliquer sur **"Installer Lib"** pour téléverser `robotPi.py` sur le Pico
+5. Créer votre programme avec les blocs Blockly
+6. Cliquer sur **"Générer Python"** pour voir le code généré
+7. Cliquer sur **"Téléverser"** pour envoyer le programme sur le Pico
 
-# 3. Tester en mode développement
-npm run dev    # Lance avec DevTools ouvert
+### Moniteur série
 
-# 4. Tester le build
-npm run build:appimage
+- **"📡 Moniteur série"** — affiche les `print()` du Pico en temps réel
+- **"🔄 Reset Pico"** — redémarre le programme en cours
 
-# 5. Commiter et pousser
-git add .
-git commit -m "Ajout de ma fonctionnalité"
-git push origin ma-feature
+### Gestionnaire de fichiers
 
-# 6. Créer une Pull Request sur GitHub
-```
-
-### Scripts Disponibles
-
-| Commande | Description |
-|----------|-------------|
-| `npm start` | Lance l'application en mode normal |
-| `npm run dev` | Lance avec DevTools (mode développement) |
-| `npm run build` | Build pour Linux (AppImage + DEB) |
-| `npm run build:appimage` | Build AppImage uniquement |
-| `npm run build:deb` | Build package Debian uniquement |
-| `npm run build:win` | Build pour Windows |
-| `npm run build:mac` | Build pour macOS |
-| `npm run build:all` | Build tous les formats Linux |
-
-## 📖 Guide d'Utilisation
-
-### 1. Première Utilisation
-
-1. **Connecter le Raspberry Pi Pico** via USB
-2. **Lancer RobotPi IDE**
-3. **Sélectionner le port série** dans la barre d'outils
-4. **Installer la bibliothèque** robotPi.py (bouton "Installer Lib")
-5. **Créer votre programme** avec les blocs Blockly
-6. **Générer le code Python** (bouton "Générer Python")
-7. **Téléverser sur le Pico** (bouton "Téléverser")
-
-### 2. Configuration du Robot
-
-Modifier `app/js/config.js` pour adapter les pins GPIO :
-
-```javascript
-const CONFIG = {
-    pins: {
-        pwmG: 0,      // PWM moteur gauche
-        in1G: 1,      // IN1 moteur gauche
-        in2G: 2,      // IN2 moteur gauche
-        pwmD: 3,      // PWM moteur droit
-        in1D: 4,      // IN1 moteur droit
-        in2D: 5,      // IN2 moteur droit
-        stby: 6       // Standby TB6612FNG
-    }
-};
-```
-
-### 3. Moniteur Série
-
-- Cliquer sur **"📡 Moniteur série"** pour voir les messages du Pico en temps réel
-- Utiliser **"🔄 Reset Pico"** pour redémarrer le programme
-- Les messages `print()` du code Python s'affichent dans la console
-
-### 4. Gestionnaire de Fichiers
-
-- Bouton **"📂 Fichiers"** pour explorer les fichiers sur le Pico
-- Télécharger des fichiers depuis le Pico vers votre ordinateur
-- Supprimer des fichiers du Pico
+- **"📂 Fichiers"** — liste les fichiers présents sur le Pico
+- Permet de télécharger ou supprimer des fichiers depuis le Pico
 
 ## 🐛 Dépannage
 
 ### ampy non trouvé
 ```bash
-# Installer ampy
 pip3 install --user adafruit-ampy
-
-# Ajouter au PATH
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
-
-# Vérifier
 ampy --version
 ```
 
 ### Permission refusée sur le port série (Linux)
 ```bash
-# Ajouter votre utilisateur au groupe dialout
 sudo usermod -a -G dialout $USER
-
-# Redémarrer votre session ou redémarrer le PC
+# Se déconnecter et reconnecter pour que le changement prenne effet
 ```
 
 ### Le Pico n'est pas détecté
-1. Vérifier que MicroPython est bien installé sur le Pico
-2. Débrancher/rebrancher le Pico
-3. Cliquer sur le bouton 🔄 "Actualiser les ports"
+1. Vérifier que MicroPython est installé sur le Pico
+2. Débrancher / rebrancher le Pico
+3. Cliquer sur **🔄 Actualiser les ports**
 4. Sur Windows, installer les drivers USB si nécessaire
 
 ### Erreur de téléversement
-1. Fermer le moniteur série avant de téléverser
-2. Vérifier qu'aucun autre programme n'utilise le port série
-3. Redémarrer l'application
+- Fermer le moniteur série avant de téléverser
+- Vérifier qu'aucun autre programme n'utilise le port série
+- Redémarrer l'application
 
 ### AppImage ne se lance pas (Linux)
 ```bash
-# Installer FUSE
 sudo apt-get install fuse libfuse2
-
-# Donner les permissions d'exécution
 chmod +x RobotPi-IDE-*.AppImage
 ```
-
-## 🤝 Contribution
-
-Les contributions sont les bienvenues ! 
-
-1. **Fork** le projet
-2. Créer une **branche** pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`)
-3. **Commiter** vos changements (`git commit -m 'Add some AmazingFeature'`)
-4. **Pousser** vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrir une **Pull Request**
-
-### Guidelines
-
-- Suivre le style de code existant
-- Commenter les nouvelles fonctionnalités
-- Tester avant de soumettre
-- Mettre à jour la documentation si nécessaire
 
 ## 📝 Changelog
 
@@ -380,25 +204,6 @@ Les contributions sont les bienvenues !
 - 🤖 Support TB6612FNG
 - 📏 Support VL53L0X
 
-## 📄 Licence
-
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-## 👨‍💻 Auteur
-
-**RATTE MATTHIAS**
-
-- GitHub: [@matelec](https://github.com/matelec)
-- Projet: [RobotPi-IDE](https://github.com/matelec/RobotPi-IDE)
-
-## 🙏 Remerciements
-
-- [Electron](https://www.electronjs.org/) - Framework desktop
-- [Blockly](https://developers.google.com/blockly) - Éditeur visuel
-- [Adafruit ampy](https://github.com/scientifichackers/ampy) - Outil de gestion MicroPython
-- [MicroPython](https://micropython.org/) - Python pour microcontrôleurs
-- [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) - Microcontrôleur RP2040
-
 ## 📚 Ressources
 
 - [Documentation MicroPython Pico](https://docs.micropython.org/en/latest/rp2/quickref.html)
@@ -406,6 +211,25 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 - [Documentation VL53L0X](https://www.st.com/en/imaging-and-photonics-solutions/vl53l0x.html)
 - [Guide WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)
 - [Blockly Developer Tools](https://developers.google.com/blockly/guides/overview)
+- [Librairie robotPi.py](micropython/README.md) — documentation complète de la librairie MicroPython
+
+## 📄 Licence
+
+Ce projet est sous licence MIT — voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+## 👨‍💻 Auteur
+
+**RATTE MATTHIAS**  
+GitHub : [@matelec](https://github.com/matelec)  
+Projet : [RobotPi-IDE](https://github.com/matelec/RobotPi-IDE)
+
+## 🙏 Remerciements
+
+- [Electron](https://www.electronjs.org/) — Framework desktop
+- [Blockly](https://developers.google.com/blockly) — Éditeur visuel
+- [Adafruit ampy](https://github.com/scientifichackers/ampy) — Outil MicroPython
+- [MicroPython](https://micropython.org/) — Python pour microcontrôleurs
+- [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) — Microcontrôleur RP2040
 
 ---
 
@@ -413,6 +237,6 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 
 **⭐ Si ce projet vous aide, n'hésitez pas à lui donner une étoile ! ⭐**
 
-[Signaler un bug](https://github.com/matelec/RobotPi-IDE/issues) · [Demander une fonctionnalité](https://github.com/matelec/RobotPi-IDE/issues) · [Documentation](https://github.com/matelec/RobotPi-IDE/wiki)
+[Signaler un bug](https://github.com/matelec/RobotPi-IDE/issues) · [Demander une fonctionnalité](https://github.com/matelec/RobotPi-IDE/issues) · [Documentation librairie](micropython/README.md)
 
 </div>
